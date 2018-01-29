@@ -1,0 +1,122 @@
+# Clear environment
+rm(list=ls())
+
+# set working directory
+setwd("C:/Users/Ankit/Desktop/Sentiment")
+
+# load required libraries
+library("readr") - load file
+library("wordcloud") - creat wordcloud
+library("tm") - for text mining
+library("ggplot2") - for visualisation
+library("syuzhet") - for sentiment scores
+
+td = read.csv("feedbackdata.csv")
+
+# Rename column name
+colnames(td)[1] <- "Designation"
+colnames(td)[2] <- "Comments"
+
+td$Comments <- as.character(td$Comments)
+
+# creating corpus
+x <- Corpus(VectorSource(td$Comments))
+
+# Remove punctuations
+x <- tm_map(x,removePunctuation)
+
+# for colour word cloud
+pal <- brewer.pal(8,'Dark2')
+
+# creating Word cloud
+wordcloud(x , min.freq = 5,max.words = Inf,width=100,height=1000,random.order = FALSE,colors = pal)
+
+# getting sentiment scores
+mysentiment <- get_nrc_sentiment(td$Comments)
+
+# sum scores by columns
+sentimentscores <- data.frame(colSums(mysentiment[,]))
+
+#give new names to created column
+names(sentimentscores) <- "score"
+
+#column bind
+sentimentscores<- cbind("Sentiment"=rownames(sentimentscores),sentimentscores)
+
+rownames(sentimentscores) <- NULL
+
+# visualise scores
+ggplot(data = sentimentscores) + geom_point(aes(x=Sentiment,y=score,fill=Sentiment)) +  geom_smooth(aes(x=Sentiment,y=score,fill=Sentiment))
+
+
+ggplot(data = sentimentscores) + geom_point(aes(x = Sentiment,y = score)) + geom_smooth(aes(x = Sentiment,y = score))
+         
+ write_csv(sentimentscores,"sentimentscore.csv")
+
+########## sentiment analysis level wise ##########
+
+library("readr")
+library("wordcloud")
+library("tm")
+library("ggplot2")
+library("syuzhet")
+
+td = read.csv("feedback_data.csv")
+
+colnames(td)[1] <- "Designation"
+
+colnames(td)[2] <- "Comments"
+
+td$Comments <- as.character(td$Comments)
+
+x <- Corpus(VectorSource(td$Comments))
+
+td$Comments <- tm_map(td$Comments,removePunctuation)
+
+# creating levels
+E0 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[1]]),collapse = " ") 
+E1 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[2]]),collapse = " ") 
+E2 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[3]]),collapse = " ") 
+E3 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[4]]),collapse = " ") 
+E4 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[5]]),collapse = " ") 
+E5 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[6]]),collapse = " ") 
+E6 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[7]]),collapse = " ") 
+E7 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[8]]),collapse = " ") 
+E8 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[9]]),collapse = " ") 
+E9 <- paste(as.character(td$Comments[td$Designation == levels(td$Designation)[10]]),collapse = " ") 
+
+overall <- c(E0,E1,E2,E3,E4,E5,E6,E7,E8,E9)  
+
+pal <- brewer.pal(9,"BrBG")
+
+# another function to create world cloud
+sentiment <- function(x)
+{
+x <- as.character(x)
+x <- Corpus(VectorSource(x))
+x <- tm_map(x,removePunctuation)
+x <- toupper(x)
+wordcloud(x ,min.freq = 4 , max.words = Inf , random.order = F ,colors =pal )
+}
+
+sentiment(E0)
+sentiment(E1)
+sentiment(E2)
+sentiment(E3)
+sentiment(E4)
+sentiment(E5)
+sentiment(E6)
+sentiment(E7)
+sentiment(E8)
+sentiment(E9)
+
+score_E0 <- get_nrc_sentiment(E0) 
+score_E1 <- get_nrc_sentiment(E1)
+score_E2 <- get_nrc_sentiment(E2)
+score_E3 <- get_nrc_sentiment(E3)
+score_E4 <- get_nrc_sentiment(E4)
+score_E5 <- get_nrc_sentiment(E5)
+score_E6 <- get_nrc_sentiment(E6)
+score_E7 <- get_nrc_sentiment(E7)
+score_E8 <- get_nrc_sentiment(E8)
+score_E9 <- get_nrc_sentiment(E9)

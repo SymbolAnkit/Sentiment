@@ -1,0 +1,20 @@
+
+api_key <- "AAA"
+api_secret <- "BBB"
+access_token <- "CCC"
+access_token_secret <- "DDD"
+
+library(twitteR)
+
+setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
+
+tweets <- searchTwitteR(" " , n=10 , lang = "en")
+tweets
+
+tweetsdf <- twListToDF(tweets)
+
+trend <- availableTrendLocations()
+head(trend)
+
+world <- getTrends(1)
+world

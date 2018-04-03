@@ -1,0 +1,41 @@
+########## YouTube DATA ANALYSIS #########
+
+library(SocialMediaLab)
+
+# google developer API key
+
+apikey <- "abc"
+
+key <- AuthenticateWithYoutubeAPI(apikey)
+
+# collect data 
+
+video_FCS <- c("c_PybuaJ5nk")
+video_HKB <- c("NClbCSZ4l5g")
+video_YU <- c("6L3VSG0W-Gk")
+video_YC <- c("ktO4gt3yOMY")
+
+BF_FCS <- CollectDataYoutube(video_FCS,key)
+BF_HKB <- CollectDataYoutube(video_HKB,key)
+BF_YU <- CollectDataYoutube(video_YU,key)
+BF_YC <- CollectDataYoutube(video_YC,key)
+
+##Cleaning (to remove ASCII code from comments)
+BF_YU$Comment <- tolower(gsub('[^\x01-\x7F]+'," ",BF_YU$Comment))
+BF_YC$Comment <- tolower(gsub('[^\x01-\x7F]+'," ",BF_YC$Comment))
+BF_FCS$Comment <- tolower(gsub('[^\x01-\x7F]+'," ",BF_FCS$Comment))
+BF_HKB$Comment <- tolower(gsub('[^\x01-\x7F]+'," ",BF_HKB$Comment))
+
+#sentiment analysis
+
+library(syuzhet)
+library(tm)
+
+sentiment <- get_nrc_sentiment(BF_YU$Comment)  
+sentiment$neutral <- ifelse(sentiment$negative+sentiment$positive==0,1,0)
+barplot(100*colSums(sentiment)/sum(sentiment),
+               las = 2 ,
+               col = rainbow(10),
+               ylab = "percentage",
+               main = "sentiment score")
+
